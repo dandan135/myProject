@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.dao.UsersMapper">
+
+
+
+    <select id="select" resultType="com.cssl.pojo.Users">
+    SELECT uid,username,password,isadmin,logdate,islog FROM users
+    where username=#{username} and password=#{password}
+    </select>
+    <update id="update">
+      UPDATE users SET logdate=CURRENT_TIMESTAMP(),islog=#{islog}
+      WHERE uid=#{uid}
+    </update>
+    <insert id="insert" keyColumn="uid" keyProperty="uid">
+        insert into users(username,password)
+        values (#{username},#{password})
+    </insert>
+    <select id="isReg" resultType="int">
+        select count(1) from users where username=#{userName}
+    </select>
+</mapper>

@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<HTML
+xmlns="http://www.w3.org/1999/xhtml">
+<HEAD><META content="IE=11.0000"
+http-equiv="X-UA-Compatible">
+ 
+<META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<TITLE>发布新投票</TITLE> <LINK href="css/style.css" rel="stylesheet" type="text/css"> 
+<SCRIPT src="js/jquery-1.8.3.min.js" type="text/javascript"></SCRIPT>
+
+<SCRIPT type="text/javascript">
+$(function () {
+    $(".del").click(function () {
+        alert("remove");
+        $(this).parent().remove();
+    })
+    $("#title").blur(function () {
+        var title=$(this).val();
+        $.post("http://localhost:8080/boot/verifyTitle",{"title":title},function (result) {
+            if(result=="no"){
+                alert("该投票内容已存在")
+            }
+        })
+    });
+    $("#add").click(function () {
+
+        $(".voteoptions").append("<P><INPUT name=options class=input-text type=text></P>");
+    });
+})
+    function check() {
+        var ary = new Array;
+        $(".input-text").each(function(i){
+            ary[i] = $(this).val();
+        });
+        var nary = ary.sort();
+        for (var i = 0; i < ary.length; i++) {
+            if (nary[i] == nary[i + 1]) {
+                alert("选项重复内容：" + nary[i]);
+                return false;
+            }
+        }
+        return true;
+    }
+
+</SCRIPT>
+ 
+<META name="GENERATOR" content="MSHTML 11.00.10586.420"></HEAD> 
+<BODY>
+<DIV class="wrap" id="header"><IMG src="images/logo.gif"> </DIV>
+<DIV class="wrap" id="navbar">
+<DIV class="profile">您好，<span th:text="${session.users.username}"></span>
+    <SPAN class="return"><A href="http://localhost:8080/boot/returnSelect">返回列表</A></SPAN>
+    <SPAN class="addnew"><A href="http://localhost:8080/boot/add">添加新投票</A></SPAN>
+    <SPAN class="modify"><A href="http://localhost:8080/boot/modify">维护</A></SPAN>
+    <SPAN class="return"><A href="http://localhost:8080/boot/logout">注销</A></SPAN>
+</DIV>
+<DIV class="search">
+</DIV>
+<DIV class="box" id="voteManage">
+    <span th:if="${update eq null}">
+        <H2>添加新投票</H2>
+    </span>
+    <span th:if="${update eq '修改'}">
+        <H2>修改投票</H2>
+
+    </span>
+
+<DIV class="content">
+
+<FORM onsubmit="return check();" action="http://localhost:8080/boot/addSubject" method="post">
+
+<DL>
+  <DT>投票内容：</DT>
+  <DD><INPUT name="struts.token.name" type="hidden" value="token"> <INPUT name="token" type="hidden" value="B1XPKLEQ7DQ6DNVWKBARPOY4HLYYXDE6">
+      <span th:if="${update eq null}">
+         <INPUT name="title" class="input-text" id="title" type="text">
+    </span>
+      <span th:if="${update eq '修改'}">
+         <INPUT name="title" class="input-text"  type="text" readonly="readonly" th:value="${subject.title}">
+          <input th:value="${update}" name="update" type="hidden"/>
+        <input th:value="${subject.sid}" name="sid" type="hidden"/>
+    </span>
+
+  				   				   				 </DD>
+  <DT>投票类型：</DT>
+  <DD><INPUT name="type" type="radio" value="dan" id="da" th:check="${subject.type eq 'dan'}">单选
+      <INPUT name="type" type="radio" value="duo" id="du" th:check="${subject.type eq 'duo'}">多选				 </DD>
+  <DT>投票选项：</DT>
+    <span th:if="${update eq null}">
+  <DD class="voteoptions">
+  <P><INPUT name="options" class="input-text" type="text"></P>
+  <P><INPUT name="options" class="input-text" type="text"></P></DD>
+    </span>
+
+    <span  th:if="${update eq '修改'}">
+  <DD class="voteoptions" >
+  <P th:each="option,nsStrat:${subject.getOps()}">
+      <INPUT th:name="'ops['+${nsStrat.index}+'].context'" class="input-text" type="text" th:value="${option.context}">
+      <input th:value="${option.oid}" type="hidden" class="input-text" th:name="'ops['+${nsStrat.index}+'].oid'"/>
+      <a href="javascript:;" class="del">删除</a>
+  </P>
+  </DD>
+    </span>
+  <DT></DT>
+
+  <DD class="button"><INPUT type="image" src="images/button_submit.gif">
+
+      <A onclick="AddOption()" id="add" href="javascript:;">增加选项</A>
+      <a th:href="@{'update'(sid=${subject.sid})}">取消操作</A>
+
+  </DD>
+</DL>
+</FORM>
+    <DIV class="error" ></DIV>
+</DIV>
+</DIV>
+</DIV>
+    <DIV class="wrap" id="footer">	北大青鸟 © 版权所有 </DIV>
+</BODY></HTML>

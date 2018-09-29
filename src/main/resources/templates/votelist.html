@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<HTML
+xmlns="http://www.w3.org/1999/xhtml">
+<HEAD><META content="IE=11.0000"
+http-equiv="X-UA-Compatible"> 
+<META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<TITLE>投票列表</TITLE> <LINK href="css/style.css" rel="stylesheet" type="text/css">
+<META name="GENERATOR" content="MSHTML 11.00.10586.420"></HEAD>
+<SCRIPT src="js/jquery-1.8.3.min.js" type="text/javascript"></SCRIPT>
+<script type="text/javascript">
+
+
+</script>
+<BODY>
+<DIV class="wrap" id="header"><IMG src="images/logo.gif"> </DIV>
+<DIV class="wrap" id="navbar">
+<DIV class="profile">您好，<span th:text="${session.users.username}"></span>
+         <SPAN class="return"><A href="http://localhost:8080/boot/returnSelect">返回列表</A></SPAN>
+		 <SPAN class="addnew"><A href="http://localhost:8080/boot/add">添加新投票</A></SPAN>
+		 <SPAN class="modify"><A href="http://localhost:8080/boot/modify">维护</A></SPAN>
+		 <SPAN class="return"><A href="http://localhost:8080/boot/logout">注销</A></SPAN>	 </DIV>
+<DIV class="search">
+<FORM action="http://localhost:8080/boot/select" method="post"><INPUT name="title" class="input-text" type="text"><INPUT name="submit" class="input-button" type="submit" value=""/>
+		 </FORM></DIV></DIV>
+<DIV class="wrap" id="vote" style="min-height: 350px">
+<span th:if="${session.state eq null}"><H2>投票列表</H2></span>
+	<span th:if="${session.state eq '维护列表'}"><H2>维护列表</H2></span>
+<DIV style="float: right;"><A href="http://localhost:8080/boot/select?pageIndex=1">首页</A>
+| 				<a th:href="@{'select'(pageIndex=${pageIndex - 1})}">上一页</a>			  | 					 <a th:href="@{'select'(pageIndex=${pageIndex + 1})}">下一页</A>				  | 			 <a th:href="@{'select'(pageIndex=${page.getPages()})}">尾页</A>
+	 </DIV><BR>
+<UL class="list">
+  <LI class="odd" th:each="op,nsStrat:${list}">
+
+  <H4><A
+  href="http://localhost:8080/myVote/Vote-view.action?entityId=21"><span th:text="${op.getTitle()}"></span></A></H4>
+<span th:if="${session.state eq null}">
+  <DIV class="join"><a th:href="@{'vote'(sid=${op.sid})}"><span >我要参与</span></A></DIV>
+</span>
+	  <span th:if="${session.state eq '维护列表'}">
+  <DIV class="join"><a th:href="@{'update'(sid=${op.sid})}"><span >修改</span></A>
+  <a th:href="@{'del'(sid=${op.sid})}"><span >删除</span>
+
+  </A>
+  </DIV>
+</span>
+  <P class="info">共有 <span th:text="${op.optionCount}"></span> 个选项，已有 						 <span th:text="${op.poll}"></span>						 个投票。</P></LI>
+</UL>
+<DIV style="float: right;"><A href="http://localhost:8080/boot/select?pageIndex=1">首页</A>
+| 					<a th:href="@{'select'(pageIndex=${pageIndex - 1})}">上一页</a>			  | 					 <a th:href="@{'select'(pageIndex=${pageIndex}+1)}">下一页</A>				  | 			 <a th:href="@{'select'(pageIndex=${page.getPages()})}">尾页</A>
+	 </DIV></DIV>
+<DIV class="wrap" id="footer">	北大青鸟 © 版权所有 </DIV></BODY></HTML>

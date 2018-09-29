@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<HTML
+xmlns="http://www.w3.org/1999/xhtml">
+
+<HEAD><META content="IE=11.0000"
+http-equiv="X-UA-Compatible">
+
+<META http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<TITLE>参与投票</TITLE> <LINK href="css/style.css" rel="stylesheet" type="text/css"> 
+<META name="GENERATOR" content="MSHTML 11.00.10586.420"></HEAD> 
+<BODY>
+<DIV class="wrap" id="header"><IMG src="images/logo.gif"> </DIV>
+<DIV class="wrap" id="navbar">
+<DIV class="profile">您好，<span th:text="${session.users.username}"></span>
+    <SPAN class="return"><A href="http://localhost:8080/boot/returnSelect">返回列表</A></SPAN>
+    <SPAN class="addnew"><A href="http://localhost:8080/boot/add">添加新投票</A></SPAN>
+    <SPAN class="modify"><A href="http://localhost:8080/boot/modify">维护</A></SPAN>
+    <SPAN class="return"><A href="http://localhost:8080/boot/logout">注销</A></SPAN>
+</DIV>
+<DIV class="search">
+<FORM action="http://localhost:8080/boot/select" method="post"><INPUT name="title" class="input-text" type="text"><INPUT name="submit" class="input-button" type="submit" value=""/>
+		 </FORM></DIV></DIV>
+<DIV class="wrap" id="vote">
+<H2>参与投票</H2>
+
+<UL class="list">
+
+  <LI>
+  <H4 th:text="${subject.getTitle()}">默认</H4>
+  <P class="info">共有 <span th:text="${subject.optionCount}"></span> 个选项，已有 <span th:text="${subject.poll}"></span> 个投票。</P>
+  <FORM action="http://localhost:8080/boot/votesubmit" method="post">
+      <INPUT name="entityId" type="hidden" th:value="${subject.sid}">
+  			    <INPUT name="struts.token.name" type="hidden" value="token"> 
+<INPUT name="token" type="hidden" value="4UDEDKPAXYKC1PTLWA2OMZGQ925VSGDB">
+				 
+  <OL th:each="n,start:${subject.ops}">
+    <LI th:if="${subject.type eq 'dan'}"><INPUT name="options" type="radio" th:value="${n.oid}" th:text="${n.context}"></LI>
+      <LI th:if="${subject.type eq 'duo'}">
+          <INPUT name="options" type="checkbox" th:value="${n.oid}" th:text="${n.context}">
+      </LI>
+  </OL>
+  <P class="voteView"><INPUT type="image" src="images/button_vote.gif"/>
+      <a th:href="@{'view'(entityId=${subject.sid})}"><IMG src="images/button_view.gif"/></A></P></FORM></LI></UL></DIV>
+<DIV class="wrap" id="footer">	北大青鸟 © 版权所有 </DIV></BODY></HTML>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.dao.OptionsMapper">
+
+
+    <sql id="sql1">
+        <where>
+            <if test="title!=null">and title like concat('%',#{title},'%')</if>
+        </where>
+    </sql>
+    <select id="select" resultType="Subject">
+        SELECT s.sid,s.title,COUNT(DISTINCT o.oid) optionCount,COUNT(DISTINCT i.userid) poll
+        FROM SUBJECT s
+        LEFT JOIN OPTIONS o ON s.sid=o.osid
+        LEFT JOIN items i ON s.sid=i.subid
+        <include refid="sql1"></include>
+        GROUP BY s.sid,s.title
+
+    </select>
+
+    <select id="isTitle" resultType="int">
+        SELECT COUNT(1) FROM SUBJECT WHERE title=#{title}
+    </select>
+    <insert id="insertSubject" keyProperty="sid" keyColumn="sid" >
+        INSERT INTO SUBJECT(title,TYPE) VALUES(#{title},#{type})
+    </insert>
+    <insert id="insertOptions" keyColumn="oid" keyProperty="oid">
+        INSERT INTO OPTIONS(context,osid)VALUES(#{context},#{osid})
+    </insert>
+    <resultMap id="maps" type="Subject">
+        <id column="sid" property="sid"/>
+        <collection property="ops" ofType="Options">
+            <id column="oid" property="oid"/>
+        </collection>
+    </resultMap>
+    <select id="selectBySid" resultMap="maps">
+        SELECT * FROM SUBJECT s
+        INNER JOIN OPTIONS o
+        ON s.sid=o.osid
+        WHERE s.sid=#{sid}
+    </select>
+    <!--<select id="selectCount" resultType="int">
+        SELECT COUNT(context) FROM OPTIONS WHERE osid=#{sid}
+    </select>-->
+    <select id="selectPoll" resultType="int">
+        SELECT COUNT(DISTINCT userid) FROM items WHERE subid=#{subid}
+    </select>
+
+    <select id="isPoll" resultType="int">
+        SELECT COUNT(1) FROM items WHERE userid=#{userid} AND subid=${subid}
+    </select>
+    <insert id="insertItems" keyProperty="id" keyColumn="id">
+        INSERT INTO items(userid,subid,opid) VALUE(#{userid},#{subid},#{opid})
+    </insert>
+    <select id="selectOptions" resultType="int">
+        SELECT COUNT(1) FROM items WHERE  opid=#{opid}
+    </select>
+    <select id="selectAllCount" resultType="int">
+        SELECT COUNT(1) FROM items WHERE subid=#{subid}
+    </select>
+    <update id="updateSubject">
+        UPDATE SUBJECT SET TYPE=#{type} where sid=#{sid}
+    </update>
+    <update id="updateOptions">
+        UPDATE OPTIONS SET context=#{context} where oid=#{oid}
+    </update>
+    <delete id="deleteSubject">
+        DELETE FROM SUBJECT WHERE sid=#{sid}
+    </delete>
+    <delete id="deleteOptions">
+        DELETE FROM OPTIONS WHERE osid=#{osid}
+    </delete>
+    <delete id="deleteItems">
+        DELETE FROM items WHERE subid=#{subid} AND opid=#{opid}
+    </delete>
+    <delete id="deleteOp">
+        DELETE FROM OPTIONS WHERE oid=#{oid}
+    </delete>
+</mapper>
